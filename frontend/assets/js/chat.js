@@ -1,4 +1,6 @@
 var checkout = {};
+// communication to lex 
+var sessionId = window.crypto.getRandomValues(new Uint32Array(4)).join("-");
 
 $(document).ready(function() {
   var $messages = $('.messages-content'),
@@ -31,6 +33,7 @@ $(document).ready(function() {
       messages: [{
         type: 'unstructured',
         unstructured: {
+          id: sessionId,
           text: message
         }
       }]
