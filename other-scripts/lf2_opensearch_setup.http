@@ -1,0 +1,22 @@
+# Run these requests individually in Kibana Dev Tools as diningadmin.
+# These requests create a new role dedicated to LF2.
+
+PUT /_opendistro/_security/api/roles/lf2_restaurant_search
+{
+  "cluster_permissions": [],
+  "index_permissions": [
+    {
+      "index_patterns": ["restaurants"],
+      "allowed_actions": ["read"]
+    }
+  ],
+  "tenant_permissions": []
+}
+
+# Map LF2's IAM execution role to the new search role.
+PUT /_opendistro/_security/api/rolesmapping/lf2_restaurant_search
+{
+  "backend_roles": ["arn:aws:iam::229128716465:role/service-role/LF2-role-xx5107wb"],
+  "hosts": [],
+  "users": []
+}
