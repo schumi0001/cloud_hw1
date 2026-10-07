@@ -221,3 +221,7 @@ __marimo__/
 
 .venv/
 other-scripts/data/
+
+# Include frontend SDK libraries
+!frontend/assets/js/sdk/lib/
+!frontend/assets/js/sdk/lib/**

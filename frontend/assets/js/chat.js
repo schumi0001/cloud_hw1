@@ -3,28 +3,22 @@ var checkout = {};
 var sessionId = window.crypto.getRandomValues(new Uint32Array(4)).join("-");
 
 $(document).ready(function() {
-  var $messages = $('.messages-content'),
-    d, h, m,
-    i = 0;
+  var $messages = $('.messages');
+  var $messageList = $('.messages-content');
 
-  $(window).load(function() {
-    $messages.mCustomScrollbar();
-    insertResponseMessage('Hi there, I\'m your personal Concierge. How can I help?');
-  });
+  insertResponseMessage('Hi there, I\'m your personal Concierge. How can I help?');
 
-  function updateScrollbar() {
-    $messages.mCustomScrollbar("update").mCustomScrollbar('scrollTo', 'bottom', {
-      scrollInertia: 10,
-      timeout: 0
+  function scrollToBottom() {
+    window.requestAnimationFrame(function() {
+      $messages.scrollTop($messages[0].scrollHeight);
     });
   }
 
-  function setDate() {
-    d = new Date()
-    if (m != d.getMinutes()) {
-      m = d.getMinutes();
-      $('<div class="timestamp">' + d.getHours() + ':' + m + '</div>').appendTo($('.message:last'));
-    }
+  function setDate($message) {
+    var date = new Date();
+    var hours = String(date.getHours()).padStart(2, '0');
+    var minutes = String(date.getMinutes()).padStart(2, '0');
+    $('<div class="timestamp">').text(hours + ':' + minutes).appendTo($message);
   }
 
   function callChatbotApi(message) {
@@ -41,14 +35,15 @@ $(document).ready(function() {
   }
 
   function insertMessage() {
-    msg = $('.message-input').val();
+    var msg = $('.message-input').val();
     if ($.trim(msg) == '') {
       return false;
     }
-    $('<div class="message message-personal">' + msg + '</div>').appendTo($('.mCSB_container')).addClass('new');
-    setDate();
+    var $message = $('<div class="message message-personal">')
+      .text(msg).appendTo($messageList).addClass('new');
+    setDate($message);
     $('.message-input').val(null);
-    updateScrollbar();
+    scrollToBottom();
 
     callChatbotApi(msg)
       .then((response) => {
@@ -102,15 +97,14 @@ $(document).ready(function() {
   })
 
   function insertResponseMessage(content) {
-    $('<div class="message loading new"><figure class="avatar"><img src="https://media.tenor.com/images/4c347ea7198af12fd0a66790515f958f/tenor.gif" /></figure><span></span></div>').appendTo($('.mCSB_container'));
-    updateScrollbar();
+    var $loading = $('<div class="message loading new"><figure class="avatar"><img src="https://media.tenor.com/images/4c347ea7198af12fd0a66790515f958f/tenor.gif" /></figure><span></span></div>').appendTo($messageList);
+    scrollToBottom();
 
     setTimeout(function() {
-      $('.message.loading').remove();
-      $('<div class="message new"><figure class="avatar"><img src="https://media.tenor.com/images/4c347ea7198af12fd0a66790515f958f/tenor.gif" /></figure>' + content + '</div>').appendTo($('.mCSB_container')).addClass('new');
-      setDate();
-      updateScrollbar();
-      i++;
+      $loading.remove();
+      var $message = $('<div class="message new"><figure class="avatar"><img src="https://media.tenor.com/images/4c347ea7198af12fd0a66790515f958f/tenor.gif" /></figure>' + content + '</div>').appendTo($messageList);
+      setDate($message);
+      scrollToBottom();
     }, 500);
   }
 
