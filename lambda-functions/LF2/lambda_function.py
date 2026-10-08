@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from datetime import datetime
 from urllib.request import Request, urlopen
 
 import boto3
@@ -74,7 +75,8 @@ def make_email(data, restaurants):
         f"Location: {data['Location'].title()}",
         f"Cuisine: {data['Cuisine'].title()}",
         f"Party size: {data['NumberOfPeople']}",
-        f"Dining time: {data['DiningTime']}",
+        f"Dining date: {data.get('DiningDate', 'Not provided')}",
+        f"Dining time: {datetime.strptime(data['DiningTime'], '%H:%M').strftime('%I:%M %p').lstrip('0')}",
         "",
     ]
     for number, restaurant in enumerate(restaurants, start=1):
